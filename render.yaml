@@ -1,0 +1,28 @@
+databases:
+  - name: contactdb
+    plan: free
+    databaseName: contact_manager
+    user: contacthub_user
+
+services:
+  - type: web
+    plan: free
+    name: contacthub
+    runtime: python
+    buildCommand: './build.sh'
+    startCommand: 'python -m gunicorn contacthub.asgi:application -k uvicorn.workers.UvicornWorker'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: contactdb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dukintvwx
+      - key: CLOUDINARY_API_KEY
+        value: 368642299415552
+      - key: CLOUDINARY_API_SECRET
+        value: I8r0mby9jWOr4FpZ5F7Hbwz2iiA
