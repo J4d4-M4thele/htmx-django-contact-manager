@@ -10,7 +10,7 @@ services:
     name: contacthub
     runtime: python
     buildCommand: './build.sh'
-    startCommand: 'python -m gunicorn contacthub.asgi:application -k uvicorn.workers.UvicornWorker'
+    startCommand: 'python -m gunicorn contacthub.wsgi:application'
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -21,8 +21,7 @@ services:
       - key: WEB_CONCURRENCY
         value: 4
       - key: CLOUDINARY_CLOUD_NAME
-        value: dukintvwx
+        value: dukintvwx  # Not sensitive, can be in blueprint
       - key: CLOUDINARY_API_KEY
-        value: 368642299415552
-      - key: CLOUDINARY_API_SECRET
-        value: I8r0mby9jWOr4FpZ5F7Hbwz2iiA
+        value: 368642299415552  # Not highly sensitive, but could move to dashboard
+      # CLOUDINARY_API_SECRET - Set this manually in Render dashboard for security
