@@ -1,0 +1,31 @@
+<tr id="contact-{{ contact.pk }}">
+  <td>{{ contact.name }}</td>
+  <td>{{ contact.email }}</td>
+  <td>{{ contact.created_at|date:"M d, Y" }}</td>
+  <td>
+    {% if contact.document %}
+    <a
+      href="{{ contact.document.url }}"
+      class="btn btn-ghost btn-xs"
+      target="_blank"
+    >
+      Download Document
+    </a>
+    {% else %}
+      <span class="text-red-500">No document</span>
+    {% endif %}
+  </td>
+  <td>
+    <button
+      class="btn btn-xs btn-error"
+      hx-post="{% url 'delete_contact' contact.pk %}"
+      hx-vals='{"_method": "DELETE"}'
+      hx-swap="none"
+      hx-trigger="click"
+      data-row-id="contact-{{ contact.pk }}"
+      hx-confirm="Are you sure you want to delete {{ contact.name }}"
+    >
+      Delete
+    </button>
+  </td>
+</tr>

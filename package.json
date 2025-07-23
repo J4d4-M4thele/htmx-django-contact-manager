@@ -1,0 +1,17 @@
+{
+  "name": "dynamic_forms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./contacts/static/css/input.css -o ./contacts/static/css/output.css --watch",
+    "build": "npx tailwindcss -i ./contacts/static/css/input.css -o ./contacts/static/css/output.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "daisyui": "^4.12.23",
+    "tailwindcss": "^3.4.1"
+  }
+}

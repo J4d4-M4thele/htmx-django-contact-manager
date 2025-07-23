@@ -1,0 +1,102 @@
+<div
+  id="contacts-list"
+  hx-on:contact-deleted="checkEmptyTable()"
+  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+  hx-ext="csrf"
+>
+  <div class="overflow-x-auto">
+    <table class="table table-zebra table-pin-rows">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Created At</th>
+          <th>Document</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="contact-table-body">
+        {% if contacts %} 
+        {% for contact in contacts %} 
+        {% include 'partials/contact-row.html' %} 
+        {% endfor %} 
+        {% else %}
+        <tr class="no-contact-row">
+          <td colspan="5">
+            <div role="alert" class="alert alert-info">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="h-6 w-6 shrink-0 stroke-current"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <span>No contacts found.</span>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  function checkEmptyTable() {
+    const tableBody = document.getElementById("contact-table-body");
+    const table = document.getElementById("contacts-table");
+    const contactsList = document.getElementById("contacts-list");
+
+    if (tableBody && tableBody.children.length === 0) {
+      // Replace the entire contacts list with the "no contacts" message
+      contactsList.innerHTML = `
+      <div role="alert" class="alert alert-info">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          class="h-6 w-6 shrink-0 stroke-current"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <span>No contacts found.</span>
+      </div>
+    `;
+    }
+  }
+
+  document.body.addEventListener("htmx:afterRequest", function (event) {
+    // Traverse up to find the button with `data-row-id`
+    let button = event.target.closest("[data-row-id]");
+    if (!button) return;
+
+    const rowId = button.getAttribute("data-row-id");
+
+    if (
+      (rowId && event.detail.xhr.status === 200) ||
+      event.detail.xhr.status === 204
+    ) {
+      const row = document.getElementById(rowId);
+      if (row) {
+        row.remove();
+        document.body.dispatchEvent(new CustomEvent("contact-deleted"));
+      }
+    }
+  });
+
+  // Listen for contact-deleted and run the empty table check
+  document.body.addEventListener("contact-deleted", function () {
+    checkEmptyTable();
+  });
+</script>
